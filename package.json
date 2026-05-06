@@ -1,0 +1,20 @@
+{
+  "name": "vanilla-scroll-sky",
+  "version": "0.1.0",
+  "description": "A pure CSS scrollytelling utility for sticky image reveals and moving captions.",
+  "style": "src/vanilla-scroll-sky.css",
+  "files": [
+    "src",
+    "demo",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "css",
+    "scrollytelling",
+    "scroll-driven-animations",
+    "sticky",
+    "vanilla-css"
+  ],
+  "license": "MIT"
+}
