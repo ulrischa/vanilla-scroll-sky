@@ -28,7 +28,6 @@ The sticky layout remains readable without scroll-driven animations. If `animati
 - Container query hook with a named container
 - Reduced-motion handling
 - Fallback for missing scroll-driven animations
-- No empty spacer element required
 
 ## Installation
 
