@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vanilla Scroll Sky Demo</title>
+  <style>
+    @layer reset, page, vanilla-scroll-sky;
+
+    @layer reset {
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+    }
+
+    @layer page {
+      body {
+        margin: 0;
+        font: 1.25rem/1.6 Georgia, serif;
+        color: #241f1a;
+        background: #faf7ef;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        height: 4.5rem;
+        display: grid;
+        place-items: center;
+        color: #fff8e8;
+        background: #26351f;
+        border-bottom: .25rem solid #d99a28;
+        font: 700 1rem/1.2 system-ui, sans-serif;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+
+      .content {
+        max-width: 42rem;
+        margin-inline: auto;
+        padding: 4rem 1.25rem;
+      }
+
+      .content h1,
+      .content h2 {
+        line-height: 1.1;
+      }
+
+      .content code,
+      .vss code {
+        padding: .1em .25em;
+        border-radius: .25em;
+        background: #efe4c7;
+        font-size: .9em;
+      }
+    }
+
+    @layer vanilla-scroll-sky {
+      @scope (.vss) {
+        :scope {
+          --vss-scene-duration: 220svh;
+          --vss-caption-delay: 40svh;
+          --vss-caption-motion-distance: 80vw;
+          --vss-caption-start-x: 0;
+          --vss-caption-start-y: 0;
+          --vss-caption-end-x: 0;
+          --vss-caption-end-y: 0;
+          --vss-image-stick-top: 0;
+          --vss-image-height: 66svh;
+          --vss-image-start-offset: 4rem;
+          --vss-image-start-scale: .96;
+          --vss-image-start-x: 0;
+          --vss-image-start-y: var(--vss-image-start-offset);
+          --vss-scene-exit-space: 55svh;
+          --vss-caption-max-width: 52rem;
+          --vss-caption-padding: clamp(1.5rem, 4vw, 3rem);
+          --vss-image-fit: cover;
+          --vss-image-position: center;
+
+          min-height: var(--vss-scene-duration);
+          position: relative;
+          overflow-x: clip;
+          padding-block-end: var(--vss-scene-exit-space);
+          container: vss / inline-size;
+        }
+
+        :scope.vss--image-left {
+          --vss-image-start-x: calc(-1 * var(--vss-image-start-offset));
+          --vss-image-start-y: 0;
+        }
+
+        :scope.vss--image-right {
+          --vss-image-start-x: var(--vss-image-start-offset);
+          --vss-image-start-y: 0;
+        }
+
+        :scope.vss--image-top {
+          --vss-image-start-x: 0;
+          --vss-image-start-y: calc(-1 * var(--vss-image-start-offset));
+        }
+
+        :scope.vss--image-bottom {
+          --vss-image-start-x: 0;
+          --vss-image-start-y: var(--vss-image-start-offset);
+        }
+
+        :scope.vss--image-none {
+          --vss-image-start-x: 0;
+          --vss-image-start-y: 0;
+        }
+
+        :scope.vss--caption-left-center {
+          --vss-caption-start-x: calc(-1 * var(--vss-caption-motion-distance));
+          --vss-caption-end-x: 0;
+        }
+
+        :scope.vss--caption-right-center {
+          --vss-caption-start-x: var(--vss-caption-motion-distance);
+          --vss-caption-end-x: 0;
+        }
+
+        :scope.vss--caption-left-right {
+          --vss-caption-start-x: calc(-1 * var(--vss-caption-motion-distance));
+          --vss-caption-end-x: var(--vss-caption-motion-distance);
+        }
+
+        :scope.vss--caption-right-left {
+          --vss-caption-start-x: var(--vss-caption-motion-distance);
+          --vss-caption-end-x: calc(-1 * var(--vss-caption-motion-distance));
+        }
+
+        .vss__image {
+          position: sticky;
+          top: var(--vss-image-stick-top);
+          z-index: 1;
+          height: var(--vss-image-height);
+          width: 100%;
+          overflow: clip;
+          opacity: 0;
+          transform: translate(var(--vss-image-start-x), var(--vss-image-start-y)) scale(var(--vss-image-start-scale));
+          animation: vss-image-in linear both;
+          animation-timeline: view();
+          animation-range: entry 0% cover 35%;
+          background: #31422c;
+        }
+
+        .vss__image > :is(img, svg, video) {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: var(--vss-image-fit);
+          object-position: var(--vss-image-position);
+        }
+
+        .vss__caption {
+          position: relative;
+          z-index: 2;
+          max-width: var(--vss-caption-max-width);
+          margin: var(--vss-caption-delay) auto 0;
+          padding: var(--vss-caption-padding);
+          color: #241f1a;
+          background: #fff4d6;
+          box-shadow: 0 .75rem 2rem rgb(36 31 26 / .18);
+          transform: translate(var(--vss-caption-start-x), var(--vss-caption-start-y));
+          animation: vss-caption-move linear both;
+          animation-timeline: view();
+          animation-range: entry 0% cover 65%;
+        }
+
+        .vss__caption:empty {
+          display: none;
+        }
+
+        @container vss (max-width: 44rem) {
+          .vss__caption {
+            margin-inline: 1rem;
+          }
+        }
+
+        @keyframes vss-image-in {
+          to {
+            opacity: 1;
+            transform: translate(0, 0) scale(1);
+          }
+        }
+
+        @keyframes vss-caption-move {
+          to {
+            transform: translate(var(--vss-caption-end-x), var(--vss-caption-end-y));
+          }
+        }
+
+        @supports not (animation-timeline: view()) {
+          .vss__image,
+          .vss__caption {
+            opacity: 1;
+            transform: none;
+            animation: none;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .vss__image,
+          .vss__caption {
+            opacity: 1;
+            transform: none;
+            animation: none;
+          }
+        }
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">Vanilla Scroll Sky</header>
+
+  <main>
+    <section class="content">
+      <h1>Vanilla Scroll Sky</h1>
+      <p>A pure CSS scrollytelling utility for sticky image reveals and moving captions. No JavaScript, no Web Components, no framework.</p>
+      <p>This demo uses normal HTML, CSS classes, CSS Custom Properties, <code>@layer</code>, <code>@scope</code>, and a named container.</p>
+    </section>
+
+    <section
+      class="vss vss--image-left"
+      style="--vss-image-stick-top: 4.5rem; --vss-image-height: 66svh; --vss-scene-duration: 220svh; --vss-caption-delay: 40svh;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%234e6f4d'/%3E%3Ccircle cx='880' cy='180' r='150' fill='%23e6b450'/%3E%3Cpath d='M0 520 C220 410 390 560 610 430 C800 320 930 420 1200 280 L1200 700 L0 700 Z' fill='%2326351f'/%3E%3Cpath d='M0 610 C230 520 460 630 690 520 C890 430 990 500 1200 390 L1200 700 L0 700 Z' fill='%237a4f2a'/%3E%3C/svg%3E"
+          alt="Abstract landscape with green hills and a warm sun"
+        >
+      </div>
+
+      <div class="vss__caption">
+        <h2>Test 1: image reveal from left</h2>
+        <p>The image uses <code>.vss--image-left</code>. The caption has no motion class, so it scrolls vertically in the normal document flow.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <h2>Caption enters from the left</h2>
+      <p>The next case uses a readable caption motion. The caption starts on the left and lands in its normal centered position.</p>
+    </section>
+
+    <section
+      class="vss vss--image-bottom vss--caption-left-center"
+      style="--vss-caption-motion-distance: 80vw; --vss-image-stick-top: 4.5rem; --vss-image-height: 62svh; --vss-scene-duration: 220svh; --vss-caption-delay: 36svh;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%2335452c'/%3E%3Ccircle cx='260' cy='160' r='130' fill='%23f2bc5b'/%3E%3Cpath d='M0 480 C170 390 320 520 500 400 C690 270 880 440 1200 310 L1200 700 L0 700 Z' fill='%23879d5f'/%3E%3Cpath d='M0 620 C260 520 430 650 650 540 C850 440 990 570 1200 500 L1200 700 L0 700 Z' fill='%235c3d2b'/%3E%3C/svg%3E"
+          alt="Abstract landscape with a sun on the left and layered green hills"
+        >
+      </div>
+
+      <div class="vss__caption">
+        <h2>Test 2: caption left to center</h2>
+        <p>This tests <code>.vss--caption-left-center</code>. The caption starts outside on the left and lands in its normal readable position.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <h2>Caption enters from the right</h2>
+      <p>This is the mirrored readable option.</p>
+    </section>
+
+    <section
+      class="vss vss--image-top vss--caption-right-center"
+      style="--vss-caption-motion-distance: 80vw; --vss-image-stick-top: 4.5rem; --vss-image-height: 60svh; --vss-scene-duration: 215svh; --vss-caption-delay: 34svh;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%2336284f'/%3E%3Ccircle cx='260' cy='190' r='120' fill='%23f2c46d'/%3E%3Cpath d='M0 450 L190 350 L380 470 L610 300 L830 460 L1000 360 L1200 460 L1200 700 L0 700 Z' fill='%235e7550'/%3E%3Cpath d='M0 560 L250 480 L500 570 L720 460 L960 590 L1200 510 L1200 700 L0 700 Z' fill='%23c07936'/%3E%3C/svg%3E"
+          alt="Abstract mountain shapes with a golden moon"
+        >
+      </div>
+
+      <div class="vss__caption">
+        <h2>Test 3: caption right to center</h2>
+        <p>This tests <code>.vss--caption-right-center</code>. The caption comes in from the right and settles in the center.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <h2>Full pass-through captions</h2>
+      <p>The next cases are stronger visual effects. They are useful for short labels, but less ideal for long reading text.</p>
+    </section>
+
+    <section
+      class="vss vss--image-left vss--caption-left-right"
+      style="--vss-caption-max-width: 34rem; --vss-caption-padding: 1.5rem; --vss-caption-motion-distance: 95vw; --vss-image-start-offset: 30vw; --vss-image-stick-top: 4.5rem; --vss-image-height: 58svh; --vss-scene-duration: 210svh; --vss-caption-delay: 30svh;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%231d3140'/%3E%3Ccircle cx='1000' cy='150' r='120' fill='%23ffcf70'/%3E%3Cpath d='M0 500 C180 380 330 540 520 420 C720 295 880 450 1200 300 L1200 700 L0 700 Z' fill='%23325a4b'/%3E%3Cpath d='M0 620 C220 500 420 650 650 520 C850 410 1020 560 1200 470 L1200 700 L0 700 Z' fill='%23b86d38'/%3E%3C/svg%3E"
+          alt="Abstract landscape with a strong dark blue sky and warm hills"
+        >
+      </div>
+
+      <div class="vss__caption">
+        <h2>Test 4: caption left to right</h2>
+        <p>This tests <code>.vss--caption-left-right</code>. The caption crosses the image stage from one side to the other.</p>
+      </div>
+    </section>
+
+    <section
+      class="vss vss--image-right vss--caption-right-left"
+      style="--vss-caption-max-width: 34rem; --vss-caption-padding: 1.5rem; --vss-caption-motion-distance: 95vw; --vss-image-start-offset: 30vw; --vss-image-stick-top: 4.5rem; --vss-image-height: 58svh; --vss-scene-duration: 210svh; --vss-caption-delay: 30svh;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%2331403a'/%3E%3Ccircle cx='850' cy='175' r='120' fill='%23f0a84a'/%3E%3Cpath d='M0 520 C250 410 370 580 610 430 C840 290 980 440 1200 350 L1200 700 L0 700 Z' fill='%23768b5f'/%3E%3Cpath d='M0 610 C230 530 480 640 690 550 C900 470 1040 600 1200 520 L1200 700 L0 700 Z' fill='%23634232'/%3E%3C/svg%3E"
+          alt="Abstract fallback test landscape"
+        >
+      </div>
+
+      <div class="vss__caption">
+        <h2>Test 5: caption right to left</h2>
+        <p>This tests <code>.vss--caption-right-left</code>. The caption moves across the sticky image stage in the opposite direction.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <h2>Subtle caption motion</h2>
+      <p>This case uses a small distance. It should feel like a gentle entrance rather than a large travel effect.</p>
+    </section>
+
+    <section
+      class="vss vss--image-none vss--caption-right-center"
+      style="--vss-caption-max-width: 44rem; --vss-caption-padding: 2rem; --vss-scene-exit-space: 35svh; --vss-caption-motion-distance: 6rem; --vss-image-stick-top: 4.5rem; --vss-image-height: 56svh; --vss-scene-duration: 180svh; --vss-caption-delay: 28svh;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%233b2e25'/%3E%3Ccircle cx='880' cy='170' r='115' fill='%23d99a28'/%3E%3Cpath d='M0 500 C240 430 420 530 620 430 C820 330 990 450 1200 360 L1200 700 L0 700 Z' fill='%236f7d45'/%3E%3Cpath d='M0 610 C170 520 390 630 580 560 C790 480 980 640 1200 520 L1200 700 L0 700 Z' fill='%23a65b36'/%3E%3C/svg%3E"
+          alt="Abstract brown and green landscape with a warm sun"
+        >
+      </div>
+
+      <div class="vss__caption">
+        <h2>Test 6: subtle caption motion</h2>
+        <p>This tests a small <code>--vss-caption-motion-distance: 6rem</code>. It is more readable than a full pass-through motion.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <h2>Image options and CSS functions</h2>
+      <p>The following cases exercise image fitting, image positioning, and CSS functions in custom properties.</p>
+    </section>
+
+    <section
+      class="vss vss--image-right vss--caption-left-center"
+      style="--vss-image-fit: contain; --vss-caption-max-width: 38rem; --vss-caption-padding: 1.5rem; --vss-scene-exit-space: 30svh; --vss-caption-motion-distance: 30vw; --vss-image-stick-top: 4.5rem; --vss-image-height: 64svh; --vss-scene-duration: 210svh; --vss-caption-delay: 34svh;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 700'%3E%3Crect width='700' height='700' fill='%23f7dd9d'/%3E%3Ccircle cx='350' cy='350' r='230' fill='%2326351f'/%3E%3Ccircle cx='350' cy='350' r='120' fill='%23d99a28'/%3E%3C/svg%3E"
+          alt="Square abstract graphic with nested circles"
+        >
+      </div>
+
+      <div class="vss__caption">
+        <h2>Test 7: contain mode and host styling</h2>
+        <p>This tests <code>--vss-image-fit: contain</code>, instance-level custom properties, and moderate caption motion.</p>
+      </div>
+    </section>
+
+    <section
+      class="vss vss--image-left vss--caption-right-center"
+      style="--vss-image-position: left top; --vss-caption-motion-distance: 40vw; --vss-image-stick-top: 4.5rem; --vss-image-height: 62svh; --vss-scene-duration: 210svh; --vss-caption-delay: 36svh;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 700'%3E%3Crect width='1600' height='700' fill='%2326333d'/%3E%3Ccircle cx='180' cy='150' r='120' fill='%23ffca73'/%3E%3Ccircle cx='1380' cy='180' r='90' fill='%238aa0b5'/%3E%3Cpath d='M0 490 C280 350 500 560 760 410 C1000 270 1220 480 1600 300 L1600 700 L0 700 Z' fill='%235e7550'/%3E%3Cpath d='M0 620 C320 520 560 650 800 560 C1050 460 1280 620 1600 520 L1600 700 L0 700 Z' fill='%23c07936'/%3E%3C/svg%3E"
+          alt="Wide abstract landscape with visual details on both sides"
+        >
+      </div>
+
+      <div class="vss__caption">
+        <h2>Test 8: image position</h2>
+        <p>This tests <code>--vss-image-position: left top</code>. It is useful when the important part of a wide image should stay anchored to one side.</p>
+      </div>
+    </section>
+
+    <section
+      class="vss vss--image-bottom vss--caption-left-center"
+      style="--demo-sticky-top: 4.5rem; --vss-image-stick-top: var(--demo-sticky-top); --vss-image-height: clamp(28rem, 65svh, 44rem); --vss-scene-duration: calc(190svh + 20rem); --vss-caption-delay: clamp(18rem, 35svh, 32rem); --vss-caption-motion-distance: clamp(8rem, 40vw, 34rem); --vss-caption-max-width: 46rem; --vss-image-start-scale: .9;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%232b3b31'/%3E%3Ccircle cx='600' cy='170' r='135' fill='%23f4c66b'/%3E%3Cpath d='M0 480 C180 330 350 560 560 400 C740 260 930 430 1200 310 L1200 700 L0 700 Z' fill='%234e6f4d'/%3E%3Cpath d='M0 620 C250 500 430 660 650 520 C850 390 1030 580 1200 470 L1200 700 L0 700 Z' fill='%237a4f2a'/%3E%3C/svg%3E"
+          alt="Abstract landscape with centered sun and layered hills"
+        >
+      </div>
+
+      <div class="vss__caption">
+        <h2>Test 9: CSS variables and functions</h2>
+        <p>This tests <code>var()</code>, <code>calc()</code>, and <code>clamp()</code> directly in inline custom properties. No JavaScript validation is involved.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <h2>Empty caption test</h2>
+      <p>The next instance omits the caption element. This is the recommended way to create an image-only story section.</p>
+    </section>
+
+    <section
+      class="vss vss--image-right"
+      style="--vss-image-stick-top: 4.5rem; --vss-image-height: 52svh; --vss-scene-duration: 140svh;"
+    >
+      <div class="vss__image">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%232c4251'/%3E%3Ccircle cx='980' cy='150' r='115' fill='%23e6b450'/%3E%3Cpath d='M0 540 C260 430 480 570 680 460 C880 360 1030 500 1200 410 L1200 700 L0 700 Z' fill='%23879d5f'/%3E%3C/svg%3E"
+          alt="Abstract landscape used to test an image-only section"
+        >
+      </div>
+    </section>
+
+    <section class="content">
+      <h2>Fallback behavior</h2>
+      <p>If scroll-driven animations are not supported, the image and caption stay visible and the sticky layout still works. If the user prefers reduced motion, transform animations are removed.</p>
+    </section>
+  </main>
+</body>
+</html>
