@@ -1,4 +1,6 @@
 # Vanilla Scroll Sky
+<img width="808" height="418" alt="AISelect_20260506_215346_Chrome" src="https://github.com/user-attachments/assets/db855679-5cb4-4c50-a2a4-6ff86283e92f" />
+
 
 A pure CSS scrollytelling utility for sticky image reveals and moving captions.
 
